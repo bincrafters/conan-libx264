@@ -1,5 +1,7 @@
 #include <cstdlib>
 #include <iostream>
+#include <stdint.h>
+#include <inttypes.h>
 #include "x264.h"
 
 int main()
