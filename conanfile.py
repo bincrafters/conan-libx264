@@ -17,6 +17,9 @@ class LibX264Conan(ConanFile):
     options = {"shared": [True, False]}
     default_options = "shared=False"
 
+    def configure(self):
+        del self.settings.compiler.libcxx
+
     def source(self):
         source_url =\
             "http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-%s-2245.tar.bz2" % self.version
