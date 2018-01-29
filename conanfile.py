@@ -86,6 +86,9 @@ class LibX264Conan(ConanFile):
         self.copy(pattern="COPYING", src='sources')
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        if self.settings.compiler == 'Visual Studio':
+            self.cpp_info.libs = ['libx264.dll.lib' if self.options.shared else 'libx264']
+        else:
+            self.cpp_info.libs = ['x264']
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(['dl', 'pthread'])
