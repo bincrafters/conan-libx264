@@ -14,8 +14,8 @@ class LibX264Conan(ConanFile):
     license = "http://git.videolan.org/?p=x264.git;a=blob;f=COPYING"
     exports_sources = ["CMakeLists.txt", "LICENSE"]
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = "shared=False", "fPIC=True"
 
     @property
     def is_mingw(self):
@@ -30,6 +30,8 @@ class LibX264Conan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        if self.is_msvc:
+            del self.options.fPIC
 
     def source(self):
         source_url =\
@@ -50,6 +52,8 @@ class LibX264Conan(ConanFile):
                 args.append('--enable-shared')
             else:
                 args.append('--enable-static')
+            if not self.is_msvc and self.options.fPIC:
+                args.append('--enable-pic')
 
             env_vars = dict()
             if self.is_msvc:
