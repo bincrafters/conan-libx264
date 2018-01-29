@@ -63,6 +63,8 @@ class LibX264Conan(ConanFile):
                 env_vars['CC'] = 'cl'
             with tools.environment_append(env_vars):
                 env_build = AutoToolsBuildEnvironment(self, win_bash=win_bash)
+                if self.is_msvc:
+                    env_build.flags.append('-%s' % str(self.settings.compiler.runtime))
                 env_build.configure(args=args)
                 env_build.make()
                 env_build.make(args=['install'])
