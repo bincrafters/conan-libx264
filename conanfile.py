@@ -54,6 +54,8 @@ class LibX264Conan(ConanFile):
                 args.append('--enable-static')
             if not self.is_msvc and self.options.fPIC:
                 args.append('--enable-pic')
+            if self.settings.build_type == 'Debug':
+                args.append('--enable-debug')
             args.append('--bit-depth=%s' % str(self.options.bit_depth))
 
             env_vars = dict()
