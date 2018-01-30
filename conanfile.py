@@ -88,6 +88,8 @@ class LibX264Conan(ConanFile):
     def package_info(self):
         if self.settings.compiler == 'Visual Studio':
             self.cpp_info.libs = ['libx264.dll.lib' if self.options.shared else 'libx264']
+        elif self.is_mingw:
+            self.cpp_info.libs = ['x264.dll' if self.options.shared else 'x264']
         else:
             self.cpp_info.libs = ['x264']
         if self.settings.os == "Linux":
