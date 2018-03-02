@@ -26,10 +26,12 @@ class LibX264Conan(ConanFile):
     def is_msvc(self):
         return self.settings.compiler == 'Visual Studio'
 
+    def config_options(self):
+        if self.settings.os == 'Windows':
+            del self.options.fPIC
+
     def configure(self):
         del self.settings.compiler.libcxx
-        if self.is_msvc:
-            del self.options.fPIC
 
     def source(self):
         source_url =\
@@ -50,7 +52,7 @@ class LibX264Conan(ConanFile):
                 args.append('--enable-shared')
             else:
                 args.append('--enable-static')
-            if not self.is_msvc and self.options.fPIC:
+            if self.settings.os != 'Windows' and self.options.fPIC:
                 args.append('--enable-pic')
             if self.settings.build_type == 'Debug':
                 args.append('--enable-debug')
