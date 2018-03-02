@@ -83,7 +83,7 @@ class LibX264Conan(ConanFile):
             self.build_configure()
 
     def package(self):
-        self.copy(pattern="COPYING", src='sources')
+        self.copy(pattern="COPYING", src='sources', dst='licenses')
 
     def package_info(self):
         if self.is_msvc:
