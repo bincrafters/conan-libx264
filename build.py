@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     for settings, options, env_vars, build_requires, reference in builder.items:
         if build_shared.get_os() == "Windows":
-            installers = ["cygwin_installer/2.9.0@bincrafters/stable"]
+            installers = ["cygwin_installer/2.9.0@bincrafters/stable", "nasm_installer/2.13.02@bincrafters/stable"]
             if os.getenv('MINGW_CONFIGURATIONS', ''):
                 installers.append("mingw_installer/1.0@conan/stable")
             build_requires.update({"*": installers})

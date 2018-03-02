@@ -25,9 +25,6 @@ class LibX264Conan(ConanFile):
     def is_msvc(self):
         return self.settings.compiler == 'Visual Studio'
 
-    def build_requirements(self):
-        self.build_requires("nasm_installer/[>=2.13.02]@bincrafters/stable")
-
     def configure(self):
         del self.settings.compiler.libcxx
         if self.is_msvc:
