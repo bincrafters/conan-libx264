@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/bincrafters/conan-libx264.svg?branch=testing%2F20171211)](https://travis-ci.org/bincrafters/conan-libx264)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-libx264?branch=testing%2F20171211&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-libx264)
 
-[Conan.io](https://conan.io) package recipe for *libx264*.
+[Conan.io](https://conan.io) package recipe for [*libx264*](https://www.videolan.org/developers/x264.html).
 
 x264 is a free software library and application for encoding video streams into the H.264/MPEG-4 AVC compression format
 
@@ -42,6 +42,8 @@ The following command both runs all the steps of the conan file, and publishes t
 ### Available Options
 | Option        | Default | Possible Values  |
 | ------------- |:----------------- |:------------:|
+| fPIC      | True |  [True, False] |
+| bit_depth      | 8 |  [8, 10] |
 | shared      | False |  [True, False] |
 
 ## Add Remote
@@ -58,4 +60,4 @@ The following command both runs all the steps of the conan file, and publishes t
 NOTE: The conan recipe license applies only to the files of this recipe, which can be used to build and package libx264.
 It does *not* in any way apply or is related to the actual software being packaged.
 
-[MIT](https://github.com/bincrafters/conan-libx264.git/blob/testing/20171211/LICENSE.md)
+[MIT](https://github.com/bincrafters/conan-libx264.git/blob/testing/20171211/LICENSE)
