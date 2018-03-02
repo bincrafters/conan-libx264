@@ -9,6 +9,7 @@ class LibX264Conan(ConanFile):
     name = "libx264"
     version = "20171211"
     url = "https://github.com/bincrafters/conan-libx264"
+    homepage = "https://www.videolan.org/developers/x264.html"
     description = "x264 is a free software library and application for encoding video streams into the " \
                   "H.264/MPEG-4 AVC compression format"
     license = "http://git.videolan.org/?p=x264.git;a=blob;f=COPYING"
