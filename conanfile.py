@@ -65,6 +65,8 @@ class LibX264Conan(ConanFile):
                 env_build = AutoToolsBuildEnvironment(self, win_bash=win_bash)
                 if self.is_msvc:
                     env_build.flags.append('-%s' % str(self.settings.compiler.runtime))
+                    # cannot open program database ... if multiple CL.EXE write to the same .PDB file, please use /FS
+                    env_build.flags.append('-FS')
                 env_build.configure(args=args)
                 env_build.make()
                 env_build.make(args=['install'])
