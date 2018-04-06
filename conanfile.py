@@ -17,6 +17,7 @@ class LibX264Conan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "bit_depth": [8, 10]}
     default_options = "shared=False", "fPIC=True", "bit_depth=8"
+    build_requires = "nasm_installer/2.13.02@bincrafters/stable"
 
     @property
     def is_mingw(self):
