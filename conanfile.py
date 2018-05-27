@@ -27,6 +27,10 @@ class LibX264Conan(ConanFile):
     def is_msvc(self):
         return self.settings.compiler == 'Visual Studio'
 
+    def build_requirements(self):
+        if self.settings.os == 'Windows':
+            self.build_requires("cygwin_installer/2.9.0@bincrafters/stable")
+
     def config_options(self):
         if self.settings.os == 'Windows':
             del self.options.fPIC
