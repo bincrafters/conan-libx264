@@ -7,12 +7,14 @@ import os
 
 class LibX264Conan(ConanFile):
     name = "libx264"
-    version = "20171211"
+    version = "20190605"
     url = "https://github.com/bincrafters/conan-libx264"
     homepage = "https://www.videolan.org/developers/x264.html"
+    author = "Bincrafters <bincrafters@gmail.com>"
     description = "x264 is a free software library and application for encoding video streams into the " \
                   "H.264/MPEG-4 AVC compression format"
-    license = "http://git.videolan.org/?p=x264.git;a=blob;f=COPYING"
+    topics = ("conan", "libx264", "video", "encoding")
+    license = "GPL-2.0"
     exports_sources = ["CMakeLists.txt", "LICENSE"]
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "bit_depth": [8, 10]}
@@ -42,7 +44,7 @@ class LibX264Conan(ConanFile):
     def source(self):
         source_url =\
             "http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-%s-2245.tar.bz2" % self.version
-        tools.get(source_url)
+        tools.get(source_url, sha256="c75203ef4759e4d7bc38e686b156c54c43b78edc73123c0b25db5224758bd1fc")
         extracted_dir = 'x264-snapshot-%s-2245' % self.version
         os.rename(extracted_dir, self._source_subfolder)
 

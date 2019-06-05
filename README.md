@@ -1,5 +1,5 @@
 [![Download](https://api.bintray.com/packages/bincrafters/public-conan/libx264%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/libx264%3Abincrafters/_latestVersion)
-[![Build Status](https://travis-ci.org/bincrafters/conan-libx264.svg?branch=testing%2F20171211)](https://travis-ci.org/bincrafters/conan-libx264)
+[![Build Status](https://travis-ci.com/bincrafters/conan-libx264.svg?branch=testing%2F20171211)](https://travis-ci.com/bincrafters/conan-libx264)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-libx264?branch=testing%2F20171211&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-libx264)
 
 [Conan.io](https://conan.io) package recipe for [*libx264*](https://www.videolan.org/developers/x264.html).
