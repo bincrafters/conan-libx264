@@ -94,4 +94,4 @@ class LibX264Conan(ConanFile):
         else:
             self.cpp_info.libs = ['x264']
         if self.settings.os == "Linux":
-            self.cpp_info.libs.extend(['dl', 'pthread'])
+            self.cpp_info.libs.extend(['dl', 'pthread', 'm'])
