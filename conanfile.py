@@ -31,7 +31,7 @@ class LibX264Conan(ConanFile):
         return self.settings.compiler == 'Visual Studio'
 
     def build_requirements(self):
-        if self._is_mingw_windows or self._is_msvc:
+        if "CONAN_BASH_PATH" not in os.environ and (self._is_mingw_windows or self._is_msvc):
             self.build_requires("cygwin_installer/2.9.0@bincrafters/stable")
 
     def config_options(self):
