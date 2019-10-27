@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, tools, AutoToolsBuildEnvironment
 import os
 
@@ -19,7 +16,7 @@ class LibX264Conan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False], "bit_depth": [8, 10, "all"]}
     default_options = {'shared': False, 'fPIC': True, 'bit_depth': 'all'}
-    build_requires = "nasm_installer/2.13.02@bincrafters/stable"
+    build_requires = "nasm/2.13.02"
     _source_subfolder = "sources"
 
     @property
@@ -40,6 +37,7 @@ class LibX264Conan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
 
     def source(self):
         source_url =\
