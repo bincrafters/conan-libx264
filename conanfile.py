@@ -18,17 +18,21 @@ class LibX264Conan(ConanFile):
     default_options = {'shared': False, 'fPIC': True, 'bit_depth': 'all'}
     build_requires = "nasm/2.13.02"
     _source_subfolder = "sources"
+    _override_env = {}
 
     @property
-    def _is_mingw_windows(self):
-        return self.settings.os == 'Windows' and self.settings.compiler == 'gcc' and os.name == 'nt'
+    def _use_winbash(self):
+        return tools.os_info.is_windows and (self.settings.compiler == 'gcc' or tools.cross_building(self.settings))
 
     @property
     def _is_msvc(self):
         return self.settings.compiler == 'Visual Studio'
 
+    def _format_path(self, path):
+        return tools.unix_path(path) if self._use_winbash else path
+
     def build_requirements(self):
-        if "CONAN_BASH_PATH" not in os.environ and (self._is_mingw_windows or self._is_msvc):
+        if "CONAN_BASH_PATH" not in os.environ and (self._use_winbash or self._is_msvc):
             self.build_requires("cygwin_installer/2.9.0@bincrafters/stable")
 
     def config_options(self):
@@ -46,9 +50,16 @@ class LibX264Conan(ConanFile):
         extracted_dir = 'x264-snapshot-%s-2245' % self.version
         os.rename(extracted_dir, self._source_subfolder)
 
+    @property
+    def env(self):
+        ret = super(LibX264Conan, self).env
+        ret.update(self._override_env)
+        return ret
+
     def _build_configure(self):
         with tools.chdir(self._source_subfolder):
-            args = ['--disable-cli']
+            prefix = tools.unix_path(self.package_folder) if self._use_winbash else self.package_folder
+            args = ['--disable-cli', '--prefix={}'.format(prefix)]
             if self.options.shared:
                 args.append('--enable-shared')
             else:
@@ -59,18 +70,29 @@ class LibX264Conan(ConanFile):
                 args.append('--enable-debug')
             args.append('--bit-depth=%s' % str(self.options.bit_depth))
 
-            env_vars = dict()
+            if tools.cross_building(self.settings):
+                if self.settings.os == "Android":
+                    # the as of ndk does not work well for building libx264
+                    self._override_env["AS"] = os.environ["CC"]
+                    ndk_root = self._format_path(os.environ["NDK_ROOT"])
+                    arch = {'armv7': 'arm',
+                            'armv8': 'aarch64',
+                            'x86': 'i686',
+                            'x86_64': 'x86_64'}.get(str(self.settings.arch))
+                    abi = 'androideabi' if self.settings.arch == 'armv7' else 'android'
+                    cross_prefix = "%s/bin/%s-linux-%s-" % (ndk_root, arch, abi)
+                    args.append('--cross-prefix=%s' % cross_prefix)
+
             if self._is_msvc:
-                env_vars['CC'] = 'cl'
-            with tools.environment_append(env_vars):
-                env_build = AutoToolsBuildEnvironment(self, win_bash=self._is_mingw_windows or self._is_msvc)
-                if self._is_msvc:
-                    env_build.flags.append('-%s' % str(self.settings.compiler.runtime))
-                    # cannot open program database ... if multiple CL.EXE write to the same .PDB file, please use /FS
-                    env_build.flags.append('-FS')
-                env_build.configure(args=args, build=False, host=False)
-                env_build.make()
-                env_build.install()
+                self._override_env['CC'] = 'cl'
+            env_build = AutoToolsBuildEnvironment(self, win_bash=self._use_winbash or self._is_msvc)
+            if self._is_msvc:
+                env_build.flags.append('-%s' % str(self.settings.compiler.runtime))
+                # cannot open program database ... if multiple CL.EXE write to the same .PDB file, please use /FS
+                env_build.flags.append('-FS')
+            env_build.configure(args=args, build=False, vars=self._override_env)
+            env_build.make()
+            env_build.install()
 
     def build(self):
         if self._is_msvc:
@@ -87,9 +109,11 @@ class LibX264Conan(ConanFile):
             self.cpp_info.libs = ['libx264.dll.lib' if self.options.shared else 'libx264']
             if self.options.shared:
                 self.cpp_info.defines.append("X264_API_IMPORTS")
-        elif self._is_mingw_windows:
+        elif self._use_winbash:
             self.cpp_info.libs = ['x264.dll' if self.options.shared else 'x264']
         else:
             self.cpp_info.libs = ['x264']
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(['dl', 'pthread', 'm'])
+        if self.settings.os == "Android":
+            self.cpp_info.libs.extend(['dl', 'm'])
