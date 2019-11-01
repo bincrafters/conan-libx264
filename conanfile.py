@@ -21,19 +21,16 @@ class LibX264Conan(ConanFile):
     _override_env = {}
 
     @property
-    def _use_winbash(self):
-        return tools.os_info.is_windows and (self.settings.compiler == 'gcc' or tools.cross_building(self.settings))
+    def _is_mingw(self):
+        return self.settings.os == "Windows" and self.settings.compiler == 'gcc'
 
     @property
     def _is_msvc(self):
         return self.settings.compiler == 'Visual Studio'
 
-    def _format_path(self, path):
-        return tools.unix_path(path) if self._use_winbash else path
-
     def build_requirements(self):
-        if "CONAN_BASH_PATH" not in os.environ and (self._use_winbash or self._is_msvc):
-            self.build_requires("cygwin_installer/2.9.0@bincrafters/stable")
+        if "CONAN_BASH_PATH" not in os.environ and tools.os_info.is_windows:
+            self.build_requires("msys2/20161025")
 
     def config_options(self):
         if self.settings.os == 'Windows':
@@ -58,7 +55,7 @@ class LibX264Conan(ConanFile):
 
     def _build_configure(self):
         with tools.chdir(self._source_subfolder):
-            prefix = tools.unix_path(self.package_folder) if self._use_winbash else self.package_folder
+            prefix = tools.unix_path(self.package_folder)
             args = ['--disable-cli', '--prefix={}'.format(prefix)]
             if self.options.shared:
                 args.append('--enable-shared')
@@ -74,7 +71,7 @@ class LibX264Conan(ConanFile):
                 if self.settings.os == "Android":
                     # the as of ndk does not work well for building libx264
                     self._override_env["AS"] = os.environ["CC"]
-                    ndk_root = self._format_path(os.environ["NDK_ROOT"])
+                    ndk_root = tools.unix_path(os.environ["NDK_ROOT"])
                     arch = {'armv7': 'arm',
                             'armv8': 'aarch64',
                             'x86': 'i686',
@@ -85,7 +82,7 @@ class LibX264Conan(ConanFile):
 
             if self._is_msvc:
                 self._override_env['CC'] = 'cl'
-            env_build = AutoToolsBuildEnvironment(self, win_bash=self._use_winbash or self._is_msvc)
+            env_build = AutoToolsBuildEnvironment(self, win_bash=tools.os_info.is_windows)
             if self._is_msvc:
                 env_build.flags.append('-%s' % str(self.settings.compiler.runtime))
                 # cannot open program database ... if multiple CL.EXE write to the same .PDB file, please use /FS
@@ -109,7 +106,7 @@ class LibX264Conan(ConanFile):
             self.cpp_info.libs = ['libx264.dll.lib' if self.options.shared else 'libx264']
             if self.options.shared:
                 self.cpp_info.defines.append("X264_API_IMPORTS")
-        elif self._use_winbash:
+        elif self._is_mingw:
             self.cpp_info.libs = ['x264.dll' if self.options.shared else 'x264']
         else:
             self.cpp_info.libs = ['x264']
