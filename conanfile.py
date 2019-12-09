@@ -29,7 +29,7 @@ class LibX264Conan(ConanFile):
 
     def build_requirements(self):
         if "CONAN_BASH_PATH" not in os.environ and tools.os_info.is_windows:
-            self.build_requires("msys2/20161025")
+            self.build_requires("msys2/20190524")
 
     def config_options(self):
         if self.settings.os == 'Windows':
